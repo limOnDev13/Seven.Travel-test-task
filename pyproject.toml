@@ -1,0 +1,23 @@
+[project]
+name = "seven-travel-test-task"
+version = "0.1.0"
+description = "The solution of the test task from Seven.Travel"
+authors = [
+    {name = "Vladimir Volosnikov",email = "volosnikovvladimir69@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi (>=0.115.6,<0.116.0)",
+    "psycopg2 (>=2.9.10,<3.0.0)",
+    "sqlalchemy[asyncio] (>=2.0.37,<3.0.0)",
+    "pydantic (>=2.10.5,<3.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "seven"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
