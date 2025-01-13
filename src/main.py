@@ -3,16 +3,22 @@
 import logging.config
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from fastapi import Depends, FastAPI
 
 from .config.app_config import Config
 from .config.log_config import LOG_CONFIG
-from .db.database import Base, engine
+from .db.database import Base, engine, session
 
 config = Config()
 logging.config.dictConfig(LOG_CONFIG)
 logger = logging.getLogger("main_logger")
+
+tags_metadata = [
+    {
+        "name": "Tasks",
+        "description": "Operations with tasks.",
+    },
+]
 
 
 @asynccontextmanager
@@ -44,9 +50,11 @@ async def lifespan(app_: FastAPI):
 def create_app() -> FastAPI:
     """Configure and create the FastAPI app."""
     logger.info("Creating FastAPI app...")
-    app_ = FastAPI(lifespan=lifespan)
-
-    app_.mount("/", StaticFiles(directory="app/static"))
+    app_ = FastAPI(
+        lifespan=lifespan,
+        openapi_tags=tags_metadata,
+        dependencies=[Depends(session)],
+    )
 
     return app_
 
