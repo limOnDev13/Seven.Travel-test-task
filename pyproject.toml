@@ -23,3 +23,32 @@ packages = [{include = "seven"}]
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+force-exclude = '''
+/(
+    \.venv
+  | \.venv_dev
+  | postgres-data
+)
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip_gitignore = true
+skip_glob = [
+    "**/.venv/*",
+    "**/.venv_dev/*",
+    "**/postgres-data/*",
+]
+
+[tool.mypy]
+exclude = [
+    ".venv",
+    ".venv_dev",
+    "tests",
+    "postgres-data"
+]
+ignore_missing_imports = true
