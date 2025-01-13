@@ -1,9 +1,9 @@
 """The module responsible for configuring the connection to the database."""
 
 from logging import getLogger
-from typing import Callable
+from typing import Any, AsyncGenerator
 
-from app.config.app_config import Config
+from fastapi import Request
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -11,6 +11,8 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from sqlalchemy.orm import declarative_base
+
+from src.config.app_config import Config
 
 logger = getLogger("main.db")
 
@@ -21,17 +23,12 @@ Session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession
 Base = declarative_base()
 
 
-def connection(func: Callable):
-    """Add a session to the func as an argument for working with the db."""
-
-    async def wrapper(*args, **kwargs):
-        """Wrap the func."""
-        async with Session() as session:
-            try:
-                return await func(*args, session=session, **kwargs)
-            except Exception as exc:
-                logger.exception(str(exc))
-                await session.rollback()
-                raise exc
-
-    return wrapper
+async def session(request: Request) -> AsyncGenerator[AsyncSession, Any]:
+    async with Session() as session_:
+        try:
+            request.state.session = session_
+            yield session_
+        except Exception as exc:
+            logger.exception(str(exc))
+            await session_.rollback()
+            raise exc
