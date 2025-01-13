@@ -1,6 +1,6 @@
 from typing import Any
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 STATUSES = {
     "todo",
@@ -9,13 +9,13 @@ STATUSES = {
 }
 
 
-class Task(BaseModel):
+class TaskSchema(BaseModel):
     title: str
     description: str
     status: str
 
 
-class TaskIn(Task):
+class TaskInSchema(TaskSchema):
 
     @classmethod
     @field_validator("status")
@@ -25,5 +25,6 @@ class TaskIn(Task):
         return status
 
 
-class TaskOut(Task):
+class TaskOutSchema(TaskSchema):
+    model_config = ConfigDict(from_attributes=True)
     id: int
