@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 
 from .config.app_config import Config
 from .config.log_config import LOG_CONFIG
-from .db.database import engine, Base
+from .db.database import Base, engine
 
 config = Config()
 logging.config.dictConfig(LOG_CONFIG)

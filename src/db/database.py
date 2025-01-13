@@ -3,6 +3,7 @@
 from logging import getLogger
 from typing import Callable
 
+from app.config.app_config import Config
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -10,8 +11,6 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from sqlalchemy.orm import declarative_base
-
-from app.config.app_config import Config
 
 logger = getLogger("main.db")
 

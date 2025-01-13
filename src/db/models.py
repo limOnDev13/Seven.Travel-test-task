@@ -1,6 +1,6 @@
 """The module responsible for model descriptions in the database."""
 
-from sqlalchemy import String, Text, Integer
+from sqlalchemy import Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .database import Base
