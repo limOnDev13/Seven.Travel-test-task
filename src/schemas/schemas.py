@@ -1,5 +1,4 @@
 from typing import Any
-from typing_extensions import Self
 
 from pydantic import BaseModel, field_validator
 
@@ -10,10 +9,13 @@ STATUSES = {
 }
 
 
-class TaskIn(BaseModel):
+class Task(BaseModel):
     title: str
     description: str
     status: str
+
+
+class TaskIn(Task):
 
     @classmethod
     @field_validator("status")
@@ -21,3 +23,7 @@ class TaskIn(BaseModel):
         if status not in STATUSES:
             raise ValueError(f"Status must be in {str(STATUSES)}")
         return status
+
+
+class TaskOut(Task):
+    id: int
