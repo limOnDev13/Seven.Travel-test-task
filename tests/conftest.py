@@ -1,17 +1,17 @@
 """The module responsible for the fixtures for the tests."""
 
-from typing import AsyncGenerator, Generator, List
 import random
 from string import ascii_letters
+from typing import AsyncGenerator, Generator, List
 
 import pytest
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.db.database import Session, engine
 from src.db.models import Base
-from src.db.database import engine, Session
 from src.db.repositories import TaskRepository
-from src.schemas.schemas import TaskInSchema, STATUSES
+from src.schemas.schemas import STATUSES, TaskInSchema
 
 
 @pytest_asyncio.fixture()
@@ -45,6 +45,15 @@ def task_in() -> Generator[TaskInSchema, None, None]:
     yield TaskInSchema(
         title="Test Title",
         description="Test Description",
+        status=random.choice(list(STATUSES)),
+    )
+
+
+@pytest.fixture
+def updated_task_in() -> Generator[TaskInSchema, None, None]:
+    yield TaskInSchema(
+        title="Updated Test Title",
+        description="Updated Test Description",
         status=random.choice(list(STATUSES)),
     )
 
