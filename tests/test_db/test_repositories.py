@@ -43,3 +43,18 @@ async def test_task_repository_get_all(
     ):
         for key, value in task_:
             assert value == getattr(task_from_db, key)
+
+
+@pytest.mark.asyncio
+async def test_task_repository_update(
+        rep: TaskRepository, task_in: TaskInSchema, updated_task_in: TaskInSchema
+) -> None:
+    with pytest.raises(ValueError):
+        await rep.update(1, updated_task_in)
+
+    task_id: int = await rep.create(task_in)
+
+    try:
+        await rep.update(task_id, updated_task_in)
+    except Exception as exc:
+        pytest.fail(str(exc))
