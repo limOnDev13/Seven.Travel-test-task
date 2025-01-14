@@ -5,7 +5,6 @@ description = "The solution of the test task from Seven.Travel"
 authors = [
     {name = "Vladimir Volosnikov",email = "volosnikovvladimir69@gmail.com"}
 ]
-readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi (>=0.115.6,<0.116.0)",
@@ -18,7 +17,7 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{include = "seven"}]
+package-mode = false
 
 
 [build-system]
