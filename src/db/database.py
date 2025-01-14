@@ -24,6 +24,7 @@ Base = declarative_base()
 
 
 async def session(request: Request) -> AsyncGenerator[AsyncSession, Any]:
+    """Create a transaction and save session obj to request.state.session."""
     async with Session() as session_:
         try:
             request.state.session = session_

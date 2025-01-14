@@ -7,7 +7,7 @@ from .database import Base
 
 
 class Task(Base):
-    """ORM representation of a table in which task records will be stored"""
+    """ORM representation of a table in which task records will be stored."""
 
     __tablename__ = "task"
 
