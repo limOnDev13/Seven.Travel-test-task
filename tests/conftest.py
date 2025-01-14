@@ -16,6 +16,7 @@ from src.schemas.schemas import STATUSES, TaskInSchema
 
 @pytest_asyncio.fixture()
 async def db() -> AsyncGenerator[None, None]:
+    """Drop and raise the base before each test."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
@@ -27,6 +28,7 @@ async def db() -> AsyncGenerator[None, None]:
 
 @pytest_asyncio.fixture()
 async def session(db) -> AsyncGenerator[AsyncSession, None]:
+    """Wrap queries in a transaction and return the session object."""
     async with Session() as session_:
         try:
             yield session_
@@ -37,11 +39,13 @@ async def session(db) -> AsyncGenerator[AsyncSession, None]:
 
 @pytest.fixture
 def rep(session: AsyncSession) -> Generator[TaskRepository, None, None]:
+    """Return the TaskRepository object."""
     yield TaskRepository(session)
 
 
 @pytest.fixture
 def task_in() -> Generator[TaskInSchema, None, None]:
+    """Return the TaskInSchema object."""
     yield TaskInSchema(
         title="Test Title",
         description="Test Description",
@@ -51,6 +55,7 @@ def task_in() -> Generator[TaskInSchema, None, None]:
 
 @pytest.fixture
 def updated_task_in() -> Generator[TaskInSchema, None, None]:
+    """Return the TaskInSchema object."""
     yield TaskInSchema(
         title="Updated Test Title",
         description="Updated Test Description",
@@ -60,6 +65,7 @@ def updated_task_in() -> Generator[TaskInSchema, None, None]:
 
 @pytest.fixture
 def many_task_in() -> Generator[List[TaskInSchema], None, None]:
+    """Return many TaskInSchema objects."""
     yield [
         TaskInSchema(
             title="".join(random.choices(ascii_letters, k=random.randint(1, 10))),
