@@ -7,7 +7,7 @@ from fastapi import Depends, FastAPI
 
 from .config.app_config import Config
 from .config.log_config import LOG_CONFIG
-from .db.database import engine, session
+from .db.database import dependency_session, engine
 from .db.models import Base
 from .routes.tasks_route import router as task_router
 
@@ -55,7 +55,7 @@ def create_app() -> FastAPI:
     app_ = FastAPI(
         lifespan=lifespan,
         openapi_tags=tags_metadata,
-        dependencies=[Depends(session)],
+        dependencies=[Depends(dependency_session)],
     )
 
     app_.include_router(task_router)

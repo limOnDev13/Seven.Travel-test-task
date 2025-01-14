@@ -21,7 +21,7 @@ engine: AsyncEngine = create_async_engine(db_config.url)
 Session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
-async def session(request: Request) -> AsyncGenerator[AsyncSession, Any]:
+async def dependency_session(request: Request) -> AsyncGenerator[AsyncSession, Any]:
     """Create a transaction and save session obj to request.state.session."""
     async with Session() as session_:
         try:
