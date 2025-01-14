@@ -1,14 +1,14 @@
 """The module responsible for the endpoints related to the tasks."""
 
 from fastapi import APIRouter, Request
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.repositories import TaskRepository
 from src.schemas.schemas import TaskInSchema
 
-router: APIRouter = APIRouter()
-templates = Jinja2Templates(directory="templates")
+router: APIRouter = APIRouter(
+    tags=["tasks"],
+)
 
 
 @router.post(
