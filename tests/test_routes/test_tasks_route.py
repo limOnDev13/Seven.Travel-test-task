@@ -157,3 +157,22 @@ async def test_update_with_invalid_input_data(
         json=invalid_data,
     )
     assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_delete_task(client: AsyncClient, task_in: TaskInSchema):
+    """Test the endpoint DELETE /tasks/{idx}/."""
+    response = await client.post("/tasks/", json=task_in.model_dump())
+    assert response.status_code == 201
+
+    task_id: int = response.json()["task_id"]
+    response = await client.delete(f"/tasks/{task_id}/")
+    assert response.status_code == 202
+
+
+@pytest.mark.asyncio
+async def test_delete_not_existing_task(client: AsyncClient):
+    """Test the endpoint DELETE /tasks/{idx}/ with not existing idx."""
+    not_existing_task_id: int = 1000
+    response = await client.delete(f"/tasks/{not_existing_task_id}/")
+    assert response.status_code == 404
