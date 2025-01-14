@@ -88,3 +88,91 @@ async def test_get_all_tasks_with_invalid_status(
     status: str = "invalid status"
     response = await client.get(f"/tasks/?status={status}")
     assert response.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_get_task_by_id(client: AsyncClient, task_in: TaskInSchema):
+    """Test the endpoint GET /tasks/{idx}/."""
+    not_existing_task_id: int = 1000
+    response = await client.get(f"/tasks/{not_existing_task_id}/")
+    assert response.status_code == 404
+
+    response = await client.post("/tasks/", json=task_in.model_dump())
+    assert response.status_code == 201
+
+    task_id: int = response.json()["task_id"]
+    response = await client.get(f"/tasks/{task_id}/")
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_update_task(
+    client: AsyncClient, task_in: TaskInSchema, updated_task_in: TaskInSchema
+):
+    """Test the endpoint PUT /tasks/{idx}/."""
+    response = await client.post("/tasks/", json=task_in.model_dump())
+    assert response.status_code == 201
+
+    task_id: int = response.json()["task_id"]
+    response = await client.put(
+        f"/tasks/{task_id}/",
+        json=updated_task_in.model_dump(),
+    )
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_update_not_existing_task(
+    client: AsyncClient, updated_task_in: TaskInSchema
+):
+    """Test the endpoint PUT /tasks/{idx}/ with not existing idx."""
+    not_existing_task_id: int = 1000
+    response = await client.put(
+        f"/tasks/{not_existing_task_id}/",
+        json=updated_task_in.model_dump(),
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_update_with_invalid_input_data(
+    client: AsyncClient, task_in: TaskInSchema, updated_task_in: TaskInSchema
+):
+    """Test the endpoint PUT /tasks/{idx}/ with invalid input data."""
+    response = await client.post("/tasks/", json=task_in.model_dump())
+    assert response.status_code == 201
+    task_id: int = response.json()["task_id"]
+
+    invalid_data: Dict[str, Any] = {"invalid": "data"}
+    response = await client.put(
+        f"/tasks/{task_id}/",
+        json=invalid_data,
+    )
+    assert response.status_code == 422
+
+    invalid_data = updated_task_in.model_dump()
+    invalid_data["status"] = "invalid status"
+    response = await client.put(
+        f"/tasks/{task_id}/",
+        json=invalid_data,
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_delete_task(client: AsyncClient, task_in: TaskInSchema):
+    """Test the endpoint DELETE /tasks/{idx}/."""
+    response = await client.post("/tasks/", json=task_in.model_dump())
+    assert response.status_code == 201
+
+    task_id: int = response.json()["task_id"]
+    response = await client.delete(f"/tasks/{task_id}/")
+    assert response.status_code == 202
+
+
+@pytest.mark.asyncio
+async def test_delete_not_existing_task(client: AsyncClient):
+    """Test the endpoint DELETE /tasks/{idx}/ with not existing idx."""
+    not_existing_task_id: int = 1000
+    response = await client.delete(f"/tasks/{not_existing_task_id}/")
+    assert response.status_code == 404
