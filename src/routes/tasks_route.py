@@ -115,3 +115,33 @@ async def update_task(request: Request, idx: int, task_in: TaskInSchema):
             content=json.dumps({"msg": "Not found"}),
             media_type="application/json",
         )
+
+
+@router.delete(
+    "/tasks/{idx}/",
+    status_code=202,
+    responses={
+        202: {
+            "description": "Task was deleted.",
+            "content": {"application/json": {"example": {"msg": "OK"}}},
+        },
+        404: {
+            "description": "Task not found.",
+            "content": {"application/json": {"example": {"msg": "Not found"}}},
+        },
+    },
+)
+async def delete_task(request: Request, idx: int):
+    """Delete the task."""
+    session: AsyncSession = request.state.session
+    task_rep: TaskRepository = TaskRepository(session)
+
+    try:
+        await task_rep.delete(idx)
+        return {"msg": "OK"}
+    except ValueError:
+        return Response(
+            status_code=404,
+            content=json.dumps({"msg": "Not found"}),
+            media_type="application/json",
+        )
