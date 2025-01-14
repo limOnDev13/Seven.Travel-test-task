@@ -1,8 +1,8 @@
 """The module responsible for the endpoints related to the tasks."""
 
 import json
-from typing import List, Optional
 import logging
+from typing import List, Optional
 
 from fastapi import APIRouter, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
