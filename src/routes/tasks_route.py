@@ -85,3 +85,33 @@ async def get_task(request: Request, idx: int):
             media_type="application/json",
         )
     return result
+
+
+@router.put(
+    "/tasks/{idx}/",
+    status_code=200,
+    responses={
+        200: {
+            "description": "Task was updated.",
+            "content": {"application/json": {"example": {"msg": "OK"}}},
+        },
+        404: {
+            "description": "Task not found.",
+            "content": {"application/json": {"example": {"msg": "Not found"}}},
+        },
+    },
+)
+async def update_task(request: Request, idx: int, task_in: TaskInSchema):
+    """Update the task."""
+    session: AsyncSession = request.state.session
+    task_rep: TaskRepository = TaskRepository(session)
+
+    try:
+        await task_rep.update(idx, task_in)
+        return {"msg": "OK"}
+    except ValueError:
+        return Response(
+            status_code=404,
+            content=json.dumps({"msg": "Not found"}),
+            media_type="application/json",
+        )
