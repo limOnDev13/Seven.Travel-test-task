@@ -11,7 +11,6 @@ To demonstrate the API, the Postman collection has been added to the repository.
 ## Setup and launch
 To run the application, you need to download the repository to the machine
 (you don't need to download the setup.cfg files and the /tests/ folder).
-In the virtual environment, install dependencies with the ```poerty install``` command.
 After that, add the environment variables (you can add them to the file .env)
 based on the example from the .env.example file. Finally, to lift the application from the database,
 you need to run the ```docker compose up --build``` command.
