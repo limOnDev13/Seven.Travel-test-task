@@ -8,8 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas.schemas import TaskInSchema, TaskOutSchema
 
-from .database import Base
-from .models import Task
+from .models import Task, Base
 
 _M = TypeVar("_M", bound=Base)
 _S = TypeVar("_S", bound=BaseModel)
