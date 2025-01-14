@@ -12,6 +12,7 @@ from src.schemas.schemas import TaskInSchema, TaskOutSchema
 async def test_task_repository_create(
     rep: TaskRepository, task_in: TaskInSchema
 ) -> None:
+    """Test the TaskRepository method create."""
     try:
         task_id: int = await rep.create(task_in)
         assert task_id == 1
@@ -21,6 +22,7 @@ async def test_task_repository_create(
 
 @pytest.mark.asyncio
 async def test_task_repository_get(rep: TaskRepository, task_in: TaskInSchema) -> None:
+    """Test the TaskRepository method get."""
     assert await rep.get(1) is None
 
     task_id: int = await rep.create(task_in)
@@ -32,6 +34,7 @@ async def test_task_repository_get(rep: TaskRepository, task_in: TaskInSchema) -
 async def test_task_repository_get_all(
     rep: TaskRepository, many_task_in: List[TaskInSchema]
 ) -> None:
+    """Test the TaskRepository method get_all."""
     for task in many_task_in:
         await rep.create(task)
 
@@ -47,8 +50,9 @@ async def test_task_repository_get_all(
 
 @pytest.mark.asyncio
 async def test_task_repository_update(
-        rep: TaskRepository, task_in: TaskInSchema, updated_task_in: TaskInSchema
+    rep: TaskRepository, task_in: TaskInSchema, updated_task_in: TaskInSchema
 ) -> None:
+    """Test the TaskRepository method update."""
     with pytest.raises(ValueError):
         await rep.update(1, updated_task_in)
 
@@ -58,3 +62,22 @@ async def test_task_repository_update(
         await rep.update(task_id, updated_task_in)
     except Exception as exc:
         pytest.fail(str(exc))
+
+
+@pytest.mark.asyncio
+async def test_task_repository_delete(
+    rep: TaskRepository, task_in: TaskInSchema
+) -> None:
+    """Test the TaskRepository method delete."""
+    with pytest.raises(ValueError):
+        await rep.delete(1)
+
+    task_id: int = await rep.create(task_in)
+
+    try:
+        await rep.delete(task_id)
+    except Exception as exc:
+        pytest.fail(str(exc))
+
+    with pytest.raises(ValueError):
+        await rep.delete(task_id)
