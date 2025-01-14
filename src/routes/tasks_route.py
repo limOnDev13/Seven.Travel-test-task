@@ -59,3 +59,29 @@ async def get_all_tasks(request: Request, status: Optional[str] = None):
             content=json.dumps({"msg": "Invalid status"}),
             media_type="application/json",
         )
+
+
+@router.get(
+    "/tasks/{idx}/",
+    status_code=200,
+    response_model=TaskOutSchema,
+    responses={
+        404: {
+            "description": "Task not found.",
+            "content": {"application/json": {"example": {"msg": "Not found"}}},
+        },
+    },
+)
+async def get_task(request: Request, idx: int):
+    """Get task by id."""
+    session: AsyncSession = request.state.session
+    task_rep: TaskRepository = TaskRepository(session)
+
+    result: Optional[TaskOutSchema] = await task_rep.get(idx)
+    if result is None:
+        return Response(
+            status_code=404,
+            content=json.dumps({"msg": "Not found"}),
+            media_type="application/json",
+        )
+    return result
