@@ -1,9 +1,13 @@
 """The module responsible for model descriptions in the database."""
 
 from sqlalchemy import Integer, String, Text
-from sqlalchemy.orm import Mapped, declarative_base, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    """Base orm class."""
+
+    pass
 
 
 class Task(Base):
