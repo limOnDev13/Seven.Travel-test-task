@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.orm import declarative_base
 
 from src.config.app_config import Config
 
@@ -20,7 +19,6 @@ db_config = Config().db
 
 engine: AsyncEngine = create_async_engine(db_config.url)
 Session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
-Base = declarative_base()
 
 
 async def session(request: Request) -> AsyncGenerator[AsyncSession, Any]:
