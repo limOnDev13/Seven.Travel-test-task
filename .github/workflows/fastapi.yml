@@ -75,4 +75,4 @@ jobs:
           POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
           POSTGRES_TEST_URL: ${{ secrets.POSTGRES_TEST_URL }}
         run: |
-          pytest app
+          pytest tests
