@@ -2,12 +2,15 @@
 
 import json
 from typing import List, Optional
+import logging
 
 from fastapi import APIRouter, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.repositories import TaskRepository
 from src.schemas.schemas import STATUSES, TaskInSchema, TaskOutSchema
+
+logger = logging.getLogger("main_logger.router")
 
 router: APIRouter = APIRouter(
     tags=["tasks"],
@@ -30,6 +33,8 @@ async def create_task(request: Request, task: TaskInSchema):
     task_rep: TaskRepository = TaskRepository(session)
     task_id: int = await task_rep.create(task)
 
+    logger.info("Created a new task with id %d", task_id)
+
     return {"msg": "OK", "task_id": task_id}
 
 
@@ -50,10 +55,13 @@ async def get_all_tasks(request: Request, status: Optional[str] = None):
     task_rep: TaskRepository = TaskRepository(session)
 
     if status is None:
+        logger.info("Returned all tasks.")
         return await task_rep.get_all()
     elif status in STATUSES:
+        logger.info("Returned all tasks with status %s.", status)
         return await task_rep.get_all_by_status(status)
     else:
+        logger.warning("Invalid status received.")
         return Response(
             status_code=400,
             content=json.dumps({"msg": "Invalid status"}),
@@ -79,11 +87,14 @@ async def get_task(request: Request, idx: int):
 
     result: Optional[TaskOutSchema] = await task_rep.get(idx)
     if result is None:
+        logger.warning("Task with id %d not found.", idx)
         return Response(
             status_code=404,
             content=json.dumps({"msg": "Not found"}),
             media_type="application/json",
         )
+
+    logger.info("Return the task with id %d", idx)
     return result
 
 
@@ -108,8 +119,10 @@ async def update_task(request: Request, idx: int, task_in: TaskInSchema):
 
     try:
         await task_rep.update(idx, task_in)
+        logger.info("The task with id %d was updated.", idx)
         return {"msg": "OK"}
     except ValueError:
+        logger.warning("Task with id %d not found.", idx)
         return Response(
             status_code=404,
             content=json.dumps({"msg": "Not found"}),
@@ -138,8 +151,10 @@ async def delete_task(request: Request, idx: int):
 
     try:
         await task_rep.delete(idx)
+        logger.info("Task with id %d was deleted.", idx)
         return {"msg": "OK"}
     except ValueError:
+        logger.warning("Task with id %d not found.", idx)
         return Response(
             status_code=404,
             content=json.dumps({"msg": "Not found"}),
